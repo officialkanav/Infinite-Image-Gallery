@@ -1,12 +1,41 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {StyleSheet, View, Image, Text} from 'react-native';
+// import FastImage from 'react-native-fast-image';
+import Spinner from 'react-native-spinkit';
 
 export default class ImageComponent extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      isLoaded: false,
+    };
   }
+
+  renderLoader = () => {
+    const {size} = this.props;
+    const loaderSize = size || 300;
+    return (
+      <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          height: loaderSize,
+          width: loaderSize,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'white',
+          borderRadius: 5,
+        }}>
+        <Spinner
+          isVisible={true}
+          size={100}
+          type={'ThreeBounce'}
+          color="black"
+        />
+      </View>
+    );
+  };
 
   renderAuthor = () => {
     const {data} = this.props;
@@ -46,12 +75,19 @@ export default class ImageComponent extends React.PureComponent {
   renderImage = () => {
     const uri = this.getUrl();
     const {size} = this.props;
+    const {isLoaded} = this.state;
     const imageSize = size || 300;
     return (
-      <Image
-        source={{uri}}
-        style={{height: imageSize, width: imageSize, borderRadius: 10}}
-      />
+      <View>
+        <Image
+          source={{uri}}
+          style={{height: imageSize, width: imageSize, borderRadius: 10}}
+          onLoad={() => {
+            this.setState({isLoaded: true});
+          }}
+        />
+        {!isLoaded && this.renderLoader()}
+      </View>
     );
   };
 
