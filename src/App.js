@@ -1,11 +1,19 @@
 import React from 'react';
-import {
-  View
-} from 'react-native';
-
-class App extends React.PureComponent {
+import AppNavigator from './navigator/AppNavigator';
+import {Provider} from 'react-redux';
+import {persistor, store} from './store/store';
+import {PersistGate} from 'redux-persist/integration/react';
+export default class App extends React.PureComponent {
+  constructor(props) {
+    super(props);
+  }
   render() {
-    return <View style={{ backgroundColor: 'steelblue', flex: 1}}/>
+    return (
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <AppNavigator />
+        </PersistGate>
+      </Provider>
+    );
   }
 }
-export default App;
