@@ -8,6 +8,8 @@ target 'Rirev' do
 
   use_react_native!(:path => config["reactNativePath"])
 
+  pod 'react-native-spinkit', :path => '../node_modules/react-native-spinkit'
+
   target 'RirevTests' do
     inherit! :complete
     # Pods for testing
