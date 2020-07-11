@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {StyleSheet, View, Modal, Button, Clipboard, Alert} from 'react-native';
@@ -113,6 +114,7 @@ export default class SearchScreen extends React.PureComponent {
       '/' +
       imageSize;
     Clipboard.setString(uri);
+    alert('Link copied to clipboard');
     return url;
   };
 
@@ -125,7 +127,7 @@ export default class SearchScreen extends React.PureComponent {
           position: 'absolute',
           top: 70,
           alignItems: 'center',
-          backgroundColor: 'lightgray',
+          backgroundColor: 'gray',
         }}>
         <View
           style={{
@@ -167,7 +169,7 @@ export default class SearchScreen extends React.PureComponent {
         <View
           style={{
             flex: 1,
-            backgroundColor: 'lightgray',
+            backgroundColor: 'gray',
             alignItems: 'center',
             justifyContent: 'center',
           }}>

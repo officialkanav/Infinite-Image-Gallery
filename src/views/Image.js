@@ -24,7 +24,7 @@ export default class ImageComponent extends React.PureComponent {
           width: loaderSize,
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: 'white',
+          backgroundColor: 'silver',
           borderRadius: 5,
         }}>
         <Spinner

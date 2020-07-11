@@ -116,7 +116,7 @@ class InfiniteList extends React.PureComponent {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'gray',
+    backgroundColor: 'lightgray',
     alignItems: 'center',
   },
 });
