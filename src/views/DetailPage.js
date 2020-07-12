@@ -1,6 +1,6 @@
 /* eslint-disable no-alert */
 import React from 'react';
-import {StyleSheet, View, Modal, Button, Clipboard} from 'react-native';
+import {StyleSheet, View, Modal, Button, Clipboard, Share} from 'react-native';
 import ImageComponent from './Image';
 import {Platform} from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -81,10 +81,15 @@ export default class SearchScreen extends React.PureComponent {
     return uri;
   };
 
-  copyToClipboard = () => {
-    const uri = this.getLink();
-    Clipboard.setString(uri);
-    alert('Link copied to clipboard');
+  onShare = async () => {
+    const url = this.getLink();
+    try {
+      await Share.share({
+        message: url,
+      });
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   renderHeader = () => {
@@ -95,7 +100,7 @@ export default class SearchScreen extends React.PureComponent {
         <View style={styles.flexRow}>
           <Button color="black" title="Close" onPress={close} />
           <View style={styles.buttonMargin}>
-            <Button title="Copy Link" onPress={this.copyToClipboard} />
+            <Button title="Share" onPress={this.onShare} />
           </View>
           <View style={styles.buttonMargin}>
             <Button title="Download" onPress={this.downloadImage} />
