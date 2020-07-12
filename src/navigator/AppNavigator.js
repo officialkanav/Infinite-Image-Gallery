@@ -24,6 +24,7 @@ export default class AppNavigator extends React.PureComponent {
             component={InfiniteList}
             options={{
               headerShown: true,
+              title: 'Images',
             }}
           />
           <Stack.Screen

@@ -1,12 +1,12 @@
 /* eslint-disable no-alert */
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {StyleSheet, View, Modal, Button, Clipboard, Alert} from 'react-native';
+import {StyleSheet, View, Modal, Button, Clipboard} from 'react-native';
 import ImageComponent from './Image';
-import CameraRoll from '@react-native-community/cameraroll';
-import {PermissionsAndroid, Platform} from 'react-native';
+import {Platform} from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import Spinner from 'react-native-spinkit';
+import {request_storage_runtime_permission} from '../utils/helpers';
 
 export default class SearchScreen extends React.PureComponent {
   constructor(props) {
@@ -17,88 +17,54 @@ export default class SearchScreen extends React.PureComponent {
     };
   }
 
+  async componentDidMount() {
+    if (Platform.OS === 'android') {
+      await request_storage_runtime_permission();
+    }
+  }
+
   renderLoader = () => {
     return (
       <Spinner isVisible={true} size={60} type={'ThreeBounce'} color="black" />
     );
   };
 
-  getPermissionAndroid = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'Image Download Permission',
-          message: 'Your permission is required to save images to your device',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        return true;
-      }
-      Alert.alert(
-        'Save remote Image',
-        'Grant Me Permission to save Image',
-        [{text: 'OK', onPress: () => {}}],
-        {cancelable: false},
-      );
-    } catch (err) {
-      Alert.alert(
-        'Save remote Image',
-        'Failed to save Image: ' + err.message,
-        [{text: 'OK', onPress: () => {}}],
-        {cancelable: false},
-      );
-    }
+  getExtention = (filename) => {
+    return /[.]/.exec(filename) ? /[^.]+$/.exec(filename) : 'jpg';
   };
 
-  handleDownload = async () => {
-    if (Platform.OS === 'android') {
-      const granted = await this.getPermissionAndroid();
-      if (!granted) {
-        return;
-      }
-    }
-    const url = this.copyToClipboard();
-    this.setState({saving: true});
-    RNFetchBlob.config({
+  downloadImage = () => {
+    var date = new Date();
+    const image_URL = this.getLink();
+    const ext = '.jpg';
+    const {config, fs} = RNFetchBlob;
+    let PictureDir = fs.dirs.PictureDir;
+    let options = {
       fileCache: true,
-      appendExt: 'png',
-    })
-      .fetch('GET', url)
+      addAndroidDownloads: {
+        useDownloadManager: true,
+        notification: true,
+        path:
+          PictureDir +
+          '/image_' +
+          Math.floor(date.getTime() + date.getSeconds() / 2) +
+          ext,
+        description: 'Image',
+      },
+    };
+    this.setState({saving: true});
+    config(options)
+      .fetch('GET', image_URL)
       .then((res) => {
-        CameraRoll.saveToCameraRoll(res.data, 'photo')
-          .then(() => {
-            Alert.alert(
-              'Save remote Image',
-              'Image Saved Successfully',
-              [{text: 'OK', onPress: () => {}}],
-              {cancelable: false},
-            );
-          })
-          .catch((err) => {
-            Alert.alert(
-              'Save remote Image',
-              'Failed to save Image: ' + err.message,
-              [{text: 'OK', onPress: () => {}}],
-              {cancelable: false},
-            );
-          })
-          .finally(() => this.setState({saving: false}));
-      })
-      .catch((error) => {
         this.setState({saving: false});
-        Alert.alert(
-          'Save remote Image',
-          'Failed to save Image: ' + error.message,
-          [{text: 'OK', onPress: () => {}}],
-          {cancelable: false},
-        );
+      })
+      .catch((err) => {
+        alert(err.message);
+        this.setState({saving: false});
       });
   };
 
-  copyToClipboard = () => {
+  getLink = () => {
     const {data} = this.props;
     const imageSize = 350;
     const url = data.download_url;
@@ -113,9 +79,13 @@ export default class SearchScreen extends React.PureComponent {
       imageSize +
       '/' +
       imageSize;
+    return uri;
+  };
+
+  copyToClipboard = () => {
+    const uri = this.getLink();
     Clipboard.setString(uri);
     alert('Link copied to clipboard');
-    return url;
   };
 
   renderHeader = () => {
@@ -134,16 +104,12 @@ export default class SearchScreen extends React.PureComponent {
             flexDirection: 'row',
           }}>
           <Button color="black" title="Close" onPress={close} />
-          <Button
-            color="black"
-            title="Copy Link"
-            onPress={this.copyToClipboard}
-          />
-          <Button
-            color="black"
-            title="Download"
-            onPress={this.handleDownload}
-          />
+          <View style={{marginLeft: 10}}>
+            <Button title="Copy Link" onPress={this.copyToClipboard} />
+          </View>
+          <View style={{marginLeft: 10}}>
+            <Button title="Download" onPress={this.downloadImage} />
+          </View>
         </View>
         {saving && this.renderLoader()}
       </View>
