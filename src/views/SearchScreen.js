@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {
   StyleSheet,
@@ -8,8 +7,9 @@ import {
   Dimensions,
   TouchableOpacity,
   Text,
-  Image,
 } from 'react-native';
+import FastImage from 'react-native-fast-image';
+import Spinner from 'react-native-spinkit';
 
 const width = Dimensions.get('window').width;
 
@@ -20,17 +20,68 @@ export default class SearchScreen extends React.PureComponent {
       text: '',
       showImage: false,
       showLoader: false,
+      author: '',
     };
   }
 
+  renderLoader = () => {
+    const {size} = this.props;
+    const loaderSize = size || 300;
+    return (
+      <View
+        style={[
+          styles.loaderContainer,
+          {height: loaderSize, width: loaderSize},
+        ]}>
+        <Spinner
+          isVisible={true}
+          size={100}
+          type={'ThreeBounce'}
+          color="black"
+        />
+      </View>
+    );
+  };
+
+  getAuthor = async () => {
+    const uri = 'https://picsum.photos/id/' + this.state.text + '/info';
+    return fetch(uri)
+      .then((response) => response.json())
+      .then((json) => {
+        const {author} = json;
+        if (author) {
+          this.setState({author});
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  renderAuthor = () => {
+    const {author} = this.state;
+    return (
+      // eslint-disable-next-line react-native/no-inline-styles
+      <View style={{marginTop: 10}}>
+        <Text style={styles.authorText}>{author}</Text>
+      </View>
+    );
+  };
+
   renderImage = () => {
     const uri = 'https://picsum.photos/id/' + this.state.text + '/300/300';
+    const {showLoader} = this.state;
     return (
-      <Image
-        source={{uri}}
-        style={{height: 300, width: 300, borderRadius: 10, marginTop: 50}}
-        onLoad={null}
-      />
+      <View>
+        <FastImage
+          source={{uri}}
+          style={styles.image}
+          onLoad={() => {
+            this.setState({showLoader: false});
+          }}
+        />
+        {showLoader && this.renderLoader()}
+      </View>
     );
   };
 
@@ -39,7 +90,9 @@ export default class SearchScreen extends React.PureComponent {
       // eslint-disable-next-line no-alert
       alert('Enter a valid number');
     } else {
-      this.setState({showImage: true});
+      this.setState({showImage: true, showLoader: true, author: ''}, () => {
+        this.getAuthor();
+      });
     }
   };
 
@@ -72,11 +125,12 @@ export default class SearchScreen extends React.PureComponent {
     const {showImage} = this.state;
     return (
       <View style={styles.container}>
-        <View style={{flexDirection: 'row'}}>
+        <View style={styles.flexRow}>
           {this.renderTextInput()}
           {this.renderSearchButton()}
         </View>
         {showImage && this.renderImage()}
+        {showImage && this.renderAuthor()}
       </View>
     );
   }
@@ -119,4 +173,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'black',
   },
+  loaderContainer: {
+    position: 'absolute',
+    top: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'silver',
+    borderRadius: 10,
+    marginTop: 50,
+  },
+  authorText: {
+    fontSize: 22,
+    color: 'black',
+    marginTop: 5,
+    alignSelf: 'center',
+  },
+  image: {height: 300, width: 300, borderRadius: 10, marginTop: 50},
+  flexRow: {flexDirection: 'row'},
 });

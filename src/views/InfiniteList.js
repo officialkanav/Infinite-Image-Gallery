@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-shadow */
 import React from 'react';
 import {StyleSheet, View, FlatList, TouchableOpacity} from 'react-native';
@@ -77,6 +76,7 @@ class InfiniteList extends React.PureComponent {
   renderFlatList = () => {
     const {loading} = this.state;
     return (
+      // eslint-disable-next-line react-native/no-inline-styles
       <View style={{flex: 1}}>
         <FlatList
           keyExtractor={(item, index) => index.toString()}
@@ -85,14 +85,14 @@ class InfiniteList extends React.PureComponent {
             return this.renderImages(item);
           }}
           onEndReached={this.onEndReached}
+          // eslint-disable-next-line react-native/no-inline-styles
           style={{flex: 0.95}}
           onEndReachedThreshold={0.1}
           onMomentumScrollBegin={() => {
             this.onEndReachedCalledDuringMomentum = false;
           }}
         />
-        <View
-          style={{flex: 0.1, alignItems: 'center', justifyContent: 'center'}}>
+        <View style={styles.loaderContainer}>
           {loading && this.renderLoader()}
         </View>
       </View>
@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightgray',
     alignItems: 'center',
   },
+  loaderContainer: {flex: 0.1, alignItems: 'center', justifyContent: 'center'},
 });
 
 const mapStateToProps = (state) => {

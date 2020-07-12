@@ -1,5 +1,4 @@
 /* eslint-disable no-alert */
-/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {StyleSheet, View, Modal, Button, Clipboard} from 'react-native';
 import ImageComponent from './Image';
@@ -92,22 +91,13 @@ export default class SearchScreen extends React.PureComponent {
     const {close} = this.props;
     const {saving} = this.state;
     return (
-      <View
-        style={{
-          position: 'absolute',
-          top: 70,
-          alignItems: 'center',
-          backgroundColor: 'gray',
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-          }}>
+      <View style={styles.headerContainer}>
+        <View style={styles.flexRow}>
           <Button color="black" title="Close" onPress={close} />
-          <View style={{marginLeft: 10}}>
+          <View style={styles.buttonMargin}>
             <Button title="Copy Link" onPress={this.copyToClipboard} />
           </View>
-          <View style={{marginLeft: 10}}>
+          <View style={styles.buttonMargin}>
             <Button title="Download" onPress={this.downloadImage} />
           </View>
         </View>
@@ -119,7 +109,7 @@ export default class SearchScreen extends React.PureComponent {
   renderImage = () => {
     const {data} = this.props;
     return (
-      <View style={{justifyContent: 'center'}}>
+      <View style={styles.justifyCenter}>
         <ImageComponent data={data} size={350} />
       </View>
     );
@@ -132,13 +122,7 @@ export default class SearchScreen extends React.PureComponent {
     }
     return (
       <Modal animationType="slide" transparent={false} visible={modalVisible}>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'gray',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
+        <View style={styles.container}>
           {this.renderHeader()}
           {this.renderImage()}
         </View>
@@ -147,4 +131,22 @@ export default class SearchScreen extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'gray',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerContainer: {
+    position: 'absolute',
+    top: 70,
+    alignItems: 'center',
+    backgroundColor: 'gray',
+  },
+  flexRow: {
+    flexDirection: 'row',
+  },
+  buttonMargin: {marginLeft: 10},
+  justifyCenter: {justifyContent: 'center'},
+});

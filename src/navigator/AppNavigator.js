@@ -32,6 +32,7 @@ export default class AppNavigator extends React.PureComponent {
             component={SearchScreen}
             options={{
               headerShown: true,
+              title: 'Search',
             }}
           />
         </Stack.Navigator>

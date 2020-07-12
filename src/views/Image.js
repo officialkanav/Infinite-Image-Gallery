@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import FastImage from 'react-native-fast-image';
@@ -17,16 +16,10 @@ export default class ImageComponent extends React.PureComponent {
     const loaderSize = size || 300;
     return (
       <View
-        style={{
-          position: 'absolute',
-          top: 0,
-          height: loaderSize,
-          width: loaderSize,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: 'silver',
-          borderRadius: 5,
-        }}>
+        style={[
+          styles.loaderContainer,
+          {height: loaderSize, width: loaderSize},
+        ]}>
         <Spinner
           isVisible={true}
           size={100}
@@ -40,18 +33,7 @@ export default class ImageComponent extends React.PureComponent {
   renderAuthor = () => {
     const {data} = this.props;
     const author = data.author;
-    return (
-      <Text
-        style={{
-          fontSize: 22,
-          color: 'black',
-          marginTop: 10,
-          marginBottom: 20,
-          alignSelf: 'center',
-        }}>
-        {author}
-      </Text>
-    );
+    return <Text style={styles.authorText}>{author}</Text>;
   };
 
   getUrl = () => {
@@ -80,6 +62,7 @@ export default class ImageComponent extends React.PureComponent {
     return (
       <View>
         <FastImage
+          // eslint-disable-next-line react-native/no-inline-styles
           style={{width: imageSize, height: imageSize, borderRadius: 5}}
           source={{
             uri,
@@ -105,4 +88,20 @@ export default class ImageComponent extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  loaderContainer: {
+    position: 'absolute',
+    top: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'silver',
+    borderRadius: 5,
+  },
+  authorText: {
+    fontSize: 22,
+    color: 'black',
+    marginTop: 10,
+    marginBottom: 20,
+    alignSelf: 'center',
+  },
+});
