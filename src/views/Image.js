@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {StyleSheet, View, Image, Text} from 'react-native';
-// import FastImage from 'react-native-fast-image';
+import {StyleSheet, View, Text} from 'react-native';
+import FastImage from 'react-native-fast-image';
 import Spinner from 'react-native-spinkit';
 
 export default class ImageComponent extends React.PureComponent {
@@ -79,9 +79,13 @@ export default class ImageComponent extends React.PureComponent {
     const imageSize = size || 300;
     return (
       <View>
-        <Image
-          source={{uri}}
-          style={{height: imageSize, width: imageSize, borderRadius: 10}}
+        <FastImage
+          style={{width: imageSize, height: imageSize, borderRadius: 5}}
+          source={{
+            uri,
+            priority: FastImage.priority.normal,
+          }}
+          resizeMode={FastImage.resizeMode.contain}
           onLoad={() => {
             this.setState({isLoaded: true});
           }}

@@ -14,6 +14,8 @@ target 'Rirev' do
 
   pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
 
+  pod 'RNFastImage', :path => '../node_modules/react-native-fast-image'
+
   target 'RirevTests' do
     inherit! :complete
     # Pods for testing
